@@ -8,6 +8,11 @@ Each branch corresponds to a specific video in the series.
 ## Videos
 [Megalomobile YouTube] (https://www.youtube.com/@megalomatt)
 
+# AI Agents Exploration Series Episode 1
+
+## 2D Snake game
+To play, open `Snake2D\index.html` in your browser.
+
 ## License
 This is free and unencumbered software released into the public domain. Do whatever you want with it.
 
