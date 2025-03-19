@@ -22,6 +22,17 @@ In your browser, navigate to `http://localhost:8000/Snake3D/`
 
 `Ctrl` + `c` to end terminal session.
 
+## 3D Snake game with specification
+
+In the terminal, navigate to the game directory and install required packages:
+`cd Snake3DBigPrompt`
+`npm install`
+
+To run, start the vite server:
+`npm run dev`
+
+Follow the link to play the game in your browser:
+`http://localhost:5173/`
 
 `Ctrl` + `c` to end terminal session.
 
