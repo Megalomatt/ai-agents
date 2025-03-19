@@ -13,6 +13,18 @@ Each branch corresponds to a specific video in the series.
 ## 2D Snake game
 To play, open `Snake2D\index.html` in your browser.
 
+## 3D Snake game
+
+In the terminal, start a local python server:
+`python -m http.server 8000`
+
+In your browser, navigate to `http://localhost:8000/Snake3D/`
+
+`Ctrl` + `c` to end terminal session.
+
+
+`Ctrl` + `c` to end terminal session.
+
 ## License
 This is free and unencumbered software released into the public domain. Do whatever you want with it.
 
