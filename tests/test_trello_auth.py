@@ -14,6 +14,7 @@ class TestTrelloAuth:
         # Mock environment variables for testing
         monkeypatch.setenv('TRELLO_API_KEY', 'test_api_key')
         monkeypatch.setenv('TRELLO_TOKEN', 'test_token')
+        monkeypatch.setenv('TRELLO_BOARD_ID', 'test_board_id')
         return TrelloAuth()
 
     def test_init_with_credentials(self, trello_auth):
@@ -86,3 +87,44 @@ class TestTrelloAuth:
         assert called_args[1]['params']['key'] == 'test_api_key'
         assert called_args[1]['params']['token'] == 'test_token'
         assert called_args[1]['params']['fields'] == 'name,desc'
+
+    def test_get_board_contents_no_id(self, trello_auth, mocker):
+        """Test getting board contents without providing ID"""
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            'name': 'Test Board',
+            'desc': 'Test Description',
+            'lists': [],
+            'cards': []
+        }
+
+        mocker.patch('requests.get', return_value=mock_response)
+
+        board_contents = trello_auth.get_board_contents()  # No ID provided, uses env
+        assert board_contents['name'] == 'Test Board'
+        assert board_contents['desc'] == 'Test Description'
+
+    def test_get_board_contents_missing_id(self, monkeypatch, mocker):
+        """Test error when no board ID is available"""
+        # Mock os.getenv to control exactly what it returns
+        def mock_getenv(key, default=None):
+            if key == 'TRELLO_API_KEY':
+                return 'test_api_key'
+            if key == 'TRELLO_TOKEN':
+                return 'test_token'
+            if key == 'TRELLO_BOARD_ID':
+                return None
+            return default
+
+        monkeypatch.setattr('os.getenv', mock_getenv)
+
+        # Mock the requests.get to prevent actual HTTP calls
+        mock_response = mocker.Mock()
+        mock_response.status_code = 401
+        mocker.patch('requests.get', return_value=mock_response)
+
+        trello = TrelloAuth()
+
+        with pytest.raises(ValueError, match="No board ID provided in .env file or method call"):
+            trello.get_board_contents()

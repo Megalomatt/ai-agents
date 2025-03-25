@@ -7,6 +7,7 @@ class TrelloAuth:
         load_dotenv()
         self.api_key = os.getenv('TRELLO_API_KEY', None)
         self.token = os.getenv('TRELLO_TOKEN', None)
+        self.board_id = os.getenv('TRELLO_BOARD_ID', None)
         self.base_url = "https://api.trello.com/1"
 
     def validate_credentials(self):
@@ -19,8 +20,17 @@ class TrelloAuth:
         response = self.make_request(url)
         return response.status_code == 200
 
-    def get_board_contents(self, board_id):
+    def get_board_contents(self, board_id=None):
         """Get the contents of a specific board"""
+        # Check for board ID first, before any other operations
+        board_id = board_id or self.board_id
+        if not board_id:
+            raise ValueError("No board ID provided in .env file or method call")
+
+        # Then check credentials
+        if not self.api_key or not self.token:
+            raise ValueError("Missing Trello credentials in .env file")
+
         url = f"{self.base_url}/boards/{board_id}"
         params = {
             'lists': 'open',
@@ -40,7 +50,7 @@ class TrelloAuth:
         }
         if additional_params:
             params.update(additional_params)
-            
+
         response = requests.get(url, params=params)
         response.raise_for_status()  # This will raise HTTPError for 401
         return response

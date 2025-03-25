@@ -9,10 +9,8 @@ def main():
         if trello.validate_credentials():
             print("Successfully authenticated with Trello!")
 
-            # Example: Get board contents
-            # Replace BOARD_ID with your actual Trello board ID
-            board_id = "8LzvPIxy"
-            board_contents = trello.get_board_contents(board_id)
+            # Get board contents using ID from environment
+            board_contents = trello.get_board_contents()
 
             print("\nBoard Information:")
             print(f"Name: {board_contents.get('name')}")
