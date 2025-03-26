@@ -8,10 +8,12 @@ Each branch corresponds to a specific video in the series.
 ## Videos
 [Megalomobile YouTube] (https://www.youtube.com/@megalomatt)
 
-# AI Agents Exploration Series Episode 2
+# AI Agents Exploration Series Episode 3
 
 Install required packages:
-`pip install python-dotenv requests`
+```bash
+pip install python-dotenv requests openai
+```
 
 ## Trello Setup
 1. Get your Trello API credentials:
@@ -22,6 +24,8 @@ Install required packages:
    ```
    TRELLO_API_KEY=your_api_key_here
    TRELLO_TOKEN=your_token_here
+   OPENAI_API_KEY=your_openai_api_key_here
+   OPENAI_MODEL=gpt-4o-mini  # or gpt-4, or any other available model
    ```
 
 3. To use the application, you'll need your board ID:
