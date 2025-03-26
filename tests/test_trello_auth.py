@@ -10,8 +10,47 @@ from src.trello_auth import TrelloAuth
 
 class TestTrelloAuth:
     @pytest.fixture
+    def mock_board_data(self):
+        """Fixture providing sample board data"""
+        return {
+            'name': 'Test Board',
+            'desc': 'Test Description',
+            'url': 'https://trello.com/b/test',
+            'lists': [
+                {
+                    'id': 'list1',
+                    'name': 'To Do',
+                    'pos': 1
+                },
+                {
+                    'id': 'list2',
+                    'name': 'Done',
+                    'pos': 2
+                }
+            ],
+            'cards': [
+                {
+                    'id': 'card1',
+                    'name': 'Test Card 1',
+                    'desc': 'Card Description 1',
+                    'due': '2024-03-01T12:00:00.000Z',
+                    'idList': 'list1',
+                    'labels': [{'name': 'Priority'}]
+                },
+                {
+                    'id': 'card2',
+                    'name': 'Test Card 2',
+                    'desc': '',
+                    'due': None,
+                    'idList': 'list2',
+                    'labels': []
+                }
+            ]
+        }
+
+    @pytest.fixture
     def trello_auth(self, monkeypatch):
-        # Mock environment variables for testing
+        """Fixture providing TrelloAuth instance with test credentials"""
         monkeypatch.setenv('TRELLO_API_KEY', 'test_api_key')
         monkeypatch.setenv('TRELLO_TOKEN', 'test_token')
         monkeypatch.setenv('TRELLO_BOARD_ID', 'test_board_id')
@@ -128,3 +167,93 @@ class TestTrelloAuth:
 
         with pytest.raises(ValueError, match="No board ID provided in .env file or method call"):
             trello.get_board_contents()
+
+    def test_get_board_contents_with_details(self, trello_auth, mocker, mock_board_data):
+        """Test getting detailed board contents"""
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = mock_board_data
+
+        mocker.patch('requests.get', return_value=mock_response)
+
+        board_contents = trello_auth.get_board_contents()
+        assert board_contents['name'] == 'Test Board'
+        assert len(board_contents['lists']) == 2
+        assert len(board_contents['cards']) == 2
+
+    def test_get_lists(self, trello_auth, mocker):
+        """Test getting lists from board"""
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = [
+            {'id': 'list1', 'name': 'To Do', 'pos': 1},
+            {'id': 'list2', 'name': 'Done', 'pos': 2}
+        ]
+
+        mocker.patch('requests.get', return_value=mock_response)
+
+        lists = trello_auth.get_lists()
+        assert len(lists) == 2
+        assert lists[0]['name'] == 'To Do'
+        assert lists[1]['name'] == 'Done'
+
+    def test_get_cards_in_list(self, trello_auth, mocker):
+        """Test getting cards from a specific list"""
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = [
+            {
+                'name': 'Test Card',
+                'desc': 'Description',
+                'due': '2024-03-01T12:00:00.000Z',
+                'labels': [{'name': 'Priority'}]
+            }
+        ]
+
+        mocker.patch('requests.get', return_value=mock_response)
+
+        cards = trello_auth.get_cards_in_list('list1')
+        assert len(cards) == 1
+        assert cards[0]['name'] == 'Test Card'
+        assert cards[0]['labels'][0]['name'] == 'Priority'
+
+    def test_get_cards_in_list_no_id(self, trello_auth):
+        """Test error when no list ID provided"""
+        with pytest.raises(ValueError, match="List ID is required"):
+            trello_auth.get_cards_in_list(None)
+
+    def test_format_board_contents(self, trello_auth, mock_board_data):
+        """Test formatting board contents"""
+        formatted = trello_auth.format_board_contents(mock_board_data)
+
+        assert formatted['name'] == 'Test Board'
+        assert formatted['description'] == 'Test Description'
+        assert formatted['url'] == 'https://trello.com/b/test'
+        assert len(formatted['lists']) == 2
+
+        # Check To Do list
+        todo_list = formatted['lists']['To Do']
+        assert len(todo_list['cards']) == 1
+        assert todo_list['cards'][0]['name'] == 'Test Card 1'
+        assert todo_list['cards'][0]['labels'] == ['Priority']
+
+        # Check Done list
+        done_list = formatted['lists']['Done']
+        assert len(done_list['cards']) == 1
+        assert done_list['cards'][0]['name'] == 'Test Card 2'
+        assert done_list['cards'][0]['labels'] == []
+
+    def test_format_board_contents_empty(self, trello_auth):
+        """Test formatting empty board contents"""
+        empty_board = {
+            'name': 'Empty Board',
+            'desc': '',
+            'url': 'https://trello.com/b/empty',
+            'lists': [],
+            'cards': []
+        }
+
+        formatted = trello_auth.format_board_contents(empty_board)
+        assert formatted['name'] == 'Empty Board'
+        assert formatted['description'] == ''
+        assert len(formatted['lists']) == 0
