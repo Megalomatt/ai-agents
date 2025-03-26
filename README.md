@@ -41,12 +41,7 @@ pip install python-dotenv requests openai
 
 2. Run the tests from the project root directory:
    ```
-   # On Windows:
-   set PYTHONPATH=src
-   pytest tests/
-
-   # On Mac/Linux:
-   PYTHONPATH=src pytest tests/
+   pytest
    ```
 
 The tests cover:

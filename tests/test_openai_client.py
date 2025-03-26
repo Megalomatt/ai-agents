@@ -11,13 +11,13 @@ class TestOpenAIClient:
         monkeypatch.delenv('OPENAI_MODEL', raising=False)
 
     @pytest.fixture
-    def mock_env_vars(self, monkeypatch):
+    def setup_env_vars(self, monkeypatch):
         """Setup environment variables for testing"""
         monkeypatch.setenv('OPENAI_API_KEY', 'test_api_key')
         monkeypatch.setenv('OPENAI_MODEL', 'gpt-4o-mini')
 
     @pytest.fixture
-    def openai_client(self, mock_env_vars):
+    def openai_client(self, setup_env_vars):
         """Create OpenAIClient instance with test credentials"""
         return OpenAIClient()
 
@@ -27,7 +27,7 @@ class TestOpenAIClient:
             OpenAIClient()
 
     @patch('src.openai_client.OpenAI')
-    def test_send_prompt_success(self, mock_openai_class, mock_env_vars):
+    def test_send_prompt_success(self, mock_openai_class, setup_env_vars):
         # Setup mock response
         mock_completion = Mock()
         mock_completion.choices = [
@@ -57,7 +57,7 @@ class TestOpenAIClient:
         )
 
     @patch('src.openai_client.OpenAI')
-    def test_send_prompt_invalid_json(self, mock_openai_class, mock_env_vars):
+    def test_send_prompt_invalid_json(self, mock_openai_class, setup_env_vars):
         # Setup mock response with invalid JSON
         mock_completion = Mock()
         mock_completion.choices = [
@@ -80,7 +80,7 @@ class TestOpenAIClient:
         assert "Invalid JSON Response" in str(exc_info.value)
 
     @patch('src.openai_client.OpenAI')
-    def test_send_prompt_api_error(self, mock_openai_class, mock_env_vars):
+    def test_send_prompt_api_error(self, mock_openai_class, setup_env_vars):
         """Test handling of OpenAI API error"""
         mock_chat = Mock()
         mock_chat.completions.create.side_effect = Exception("API Error")
@@ -94,7 +94,7 @@ class TestOpenAIClient:
             client.send_prompt("Test prompt")
 
     @patch('src.openai_client.OpenAI')
-    def test_send_prompt_uses_max_tokens(self, mock_openai_class, mock_env_vars):
+    def test_send_prompt_uses_max_tokens(self, mock_openai_class, setup_env_vars):
         """Test that max_tokens is passed to the API call"""
         mock_completion = Mock()
         mock_completion.choices = [
