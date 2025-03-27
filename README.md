@@ -6,7 +6,7 @@ Code and experiments from my YouTube series exploring AI agents and their capabi
 Each branch corresponds to a specific video in the series.
 
 ## Videos
-[Megalomobile YouTube] (https://www.youtube.com/@megalomatt)
+[My AI Dev Team Part 1 - Agents](https://www.youtube.com/watch?v=WiNIFcBo0vs)
 
 ## License
 This is free and unencumbered software released into the public domain. Do whatever you want with it.
