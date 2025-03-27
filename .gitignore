@@ -22,3 +22,7 @@ wheels/
 
 # Environment
 .env
+
+# Temporary files
+temp/
+*.json
