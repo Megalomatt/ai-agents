@@ -7,8 +7,11 @@ Each branch corresponds to a specific video in the series.
 
 ## Videos
 [My AI Dev Team Part 1 - Agents](https://www.youtube.com/watch?v=WiNIFcBo0vs)
+[I Made My To-Do List Read Itself - Here's How](https://youtu.be/LOzST1WEJMc)
+
 
 # AI Agents Exploration Series Episode 2
+## I Made My To-Do List Read Itself - Here's How
 
 Install required packages:
 `pip install python-dotenv requests`
@@ -18,16 +21,21 @@ Install required packages:
    - Visit https://trello.com/app-key to get your API key
    - On the same page, click "Generate a Token" to create your token
 
-2. Create a `.env` file in the root directory with your credentials:
+2. Copy the `.example.env` file to create a new `.env` file:
+   ```
+   cp .example.env .env
+   ```
+
+3. Fill in your credentials in the `.env` file:
    ```
    TRELLO_API_KEY=your_api_key_here
    TRELLO_TOKEN=your_token_here
+   TRELLO_BOARD_ID=your_board_id_here
    ```
 
-3. To use the application, you'll need your board ID:
+4. To get your board ID:
    - Open your Trello board in a browser
    - The board ID is in the URL: `https://trello.com/b/BOARD_ID/board-name`
-   - Copy the BOARD_ID and use it in the main.py file
 
 ## Testing
 1. Install testing requirements:
@@ -46,14 +54,22 @@ Install required packages:
    ```
 
 The tests cover:
-- Initialization with and without credentials
-- Credential validation
-- Board content retrieval
-- Request handling with parameters
+- TrelloAuth initialization and credential handling
+- API credential validation
+- Board content retrieval and formatting
+- List and card operations
+- Error handling for missing credentials/IDs
+- Request parameter handling
+- Response formatting and data structure validation
+
+Each test case ensures proper functionality of the Trello integration, including:
+- Handling of environment variables
+- API request formatting
+- Response parsing
+- Error conditions
+- Data transformation and formatting
 
 ## License
 This is free and unencumbered software released into the public domain. Do whatever you want with it.
 
 This code is experimental and provided as-is, without any warranties or guarantees. You are free to use, modify, and distribute it, but do so at your own discretion.
-
-## Project Structure
