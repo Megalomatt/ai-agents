@@ -8,9 +8,10 @@ Each branch corresponds to a specific video in the series.
 ## Videos
 [My AI Dev Team Part 1 - Agents](https://www.youtube.com/watch?v=WiNIFcBo0vs)
 [I Made My To-Do List Read Itself - Here's How](https://youtu.be/LOzST1WEJMc)
+[Can AI Run Your Project Better Than You?](https://youtu.be/VfmZZz9iRx8)
 
 # AI Agents Exploration Series Episode 3
-## Automated user stories
+## Can AI Run Your Project Better Than You?
 
 Install required packages:
 ```bash
